@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const res = await fetch(`https://api.spotify.com/v1/me/tracks?limit=2&offset=1`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${session?.access_token}`, // Token başlığı ekleniyor
+      Authorization: `Bearer ${session?.access_token}`,
       "Content-Type": "application/json",
     },
   });
