@@ -18,13 +18,17 @@ export const authOptions: AuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       if (account) {
         token.access_token = account.access_token;
       }
+      if (user) {
+        token.id = user.id;
+      }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
+      session.user.id = token.id;
       session.access_token = token.access_token;
       return session;
     },
