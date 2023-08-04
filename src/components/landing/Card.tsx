@@ -1,13 +1,5 @@
+import { ICard } from "@/lib/types/types";
 import Image from "next/image";
-
-interface ICard {
-  header: string;
-  image: any;
-  alt: string;
-
-  imgHeight: number;
-  imgWidth: number;
-}
 
 export function Card({ header, image, alt, imgHeight, imgWidth }: ICard) {
   return (
