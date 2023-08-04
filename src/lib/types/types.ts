@@ -9,3 +9,12 @@ interface IPlaylistCreate {
     access_token?: string;
   };
 }
+
+export interface ICard {
+  header: string;
+  image: any;
+  alt: string;
+
+  imgHeight: number;
+  imgWidth: number;
+}
