@@ -1,4 +1,4 @@
-interface IPlaylistCreate {
+export interface IPlaylistCreate {
   body: {
     name: string;
     description: string;
