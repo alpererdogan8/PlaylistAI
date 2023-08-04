@@ -1,7 +1,8 @@
+import { IPlaylistCreate } from "@/lib/types/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const req = await request.json();
+  const req: IPlaylistCreate = await request.json();
   const res = await fetch(`https://api.spotify.com/v1/users/${req?.session?.id}/playlists`, {
     method: "POST",
     headers: {
