@@ -1,7 +1,12 @@
 import { GenerateListSVG, MusicListSVG, PromptSVG } from "@/assets/images/content";
 import { Card } from "@/components/landing/Card";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  if (session?.user) redirect("/playlist");
   return (
     <>
       <section className="flex flex-col items-center justify-center w-full">
