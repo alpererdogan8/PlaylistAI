@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${AlbertSans.className} flex flex-col justify-between items-center h-screen selection:bg-primary selection:text-black font-semibold `}>
+        className={`${AlbertSans.className} flex flex-col justify-between items-center h-screen selection:bg-[#23FF53] selection:text-secondary-foreground font-semibold `}>
         <Session>
           <ThemeProvider attribute="class" enableSystem>
             <Header />
