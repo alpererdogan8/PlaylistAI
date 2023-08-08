@@ -5,8 +5,8 @@ import { ThemeButton } from "../Theme";
 
 export function Footer() {
   return (
-    <footer className="px-5 min-h-[185px]  bg-black w-full lg:h-[225px] mt-auto flex flex-col md:flex-row items-center justify-evenly md:justify-between  ">
-      <Link href="https://alpererdogan.dev" className="text-secondary text-lg font-bold  lg:text-base">
+    <footer className="px-5 min-h-[185px] bg-black dark:bg-primary text-secondary  w-full lg:h-[225px] mt-auto flex flex-col md:flex-row items-center justify-evenly md:justify-between  ">
+      <Link href="https://alpererdogan.dev" className=" text-lg font-bold  text-primary-foreground lg:text-base">
         alpererdogan.dev
       </Link>
       <div className="flex justify-center  lg:flex-wrap gap-7 lg:gap-[50px] ">
