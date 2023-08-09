@@ -6,7 +6,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  if (session?.user) redirect("/playlist");
+  if (session?.user) redirect("/generate");
   return (
     <>
       <section className="flex flex-col items-center justify-center w-full">
