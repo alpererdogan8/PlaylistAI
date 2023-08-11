@@ -16,7 +16,7 @@ export function ThemeButton() {
       <Button
         variant={"outline"}
         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        className="w-[16em] h-[3rem] md:w-[10.563rem] md:h-[3.563rem] transition-all border-2 font-bold text-md  md:text-lg tracking-[-5.5%] rounded-[5px] bg-black dark:bg-black text-white ">
+        className="w-[16em] h-[3rem] md:w-[10.563rem] md:h-[3.563rem] transition-all border-2 font-bold text-md  md:text-lg tracking-[-5.5%] rounded-[5px] bg-black text-primary-foreground">
         {currentTheme?.charAt(0).toUpperCase() + currentTheme?.slice(1)!}
       </Button>
     </>
