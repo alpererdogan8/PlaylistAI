@@ -19,7 +19,7 @@ export function PlaylistCard() {
   });
 
   return (
-    <Card className="flex flex-col sm:flex-row w-11/12 md:w-8/12  max-w-[900px] m-2 h-auto p-2 ">
+    <Card className="flex flex-col sm:flex-row w-11/12 md:w-8/12  max-w-[900px] m-8 drop-shadow-xl h-auto p-2 ">
       <div className="bg-primary rounded-lg  text-[#23FF53] w-full h-[13.25rem] sm:w-[15.63rem] shrink-0 md:h-[15.25rem] pt-5 pl-5 text-4xl">
         Playlist AI
       </div>
@@ -46,8 +46,9 @@ export function PlaylistCard() {
           <div className="hidden lg:flex justify-between space-x-2">
             <span>Public</span>
             <Switch
-              onClick={() => setPlaylistInfo({ ...playlistInfo, public: !playlistInfo.public })}
+              onCheckedChange={() => setPlaylistInfo({ ...playlistInfo, public: !playlistInfo.public })}
               className="data-[state=checked]:bg-[#23FF53] bg-[#23FF53]"
+              checked={playlistInfo.public}
             />
           </div>
         </CardHeader>
@@ -56,8 +57,9 @@ export function PlaylistCard() {
           <div className="flex lg:hidden justify-between md:justify-end space-x-2">
             <span>Public</span>
             <Switch
-              onClick={(e: any) => setPlaylistInfo({ ...playlistInfo, public: !playlistInfo.public })}
+              onCheckedChange={(e: any) => setPlaylistInfo({ ...playlistInfo, public: !playlistInfo.public })}
               className="data-[state=checked]:bg-[#23FF53] mx-3 bg-[#23FF53]"
+              checked={playlistInfo.public}
             />
           </div>
           <Button className=" bg-black dark:text-black dark:bg-white dark:hover:bg-primary dark:hover:text-white">
