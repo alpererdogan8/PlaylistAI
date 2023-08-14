@@ -13,13 +13,13 @@ type TPlaylistInfo = {
 
 export function PlaylistCard() {
   const [playlistInfo, setPlaylistInfo] = useState<TPlaylistInfo>({
-    name: "Playlist AI",
+    name: "My AI Mix",
     description: "Songs you like edited by gpt",
     public: false,
   });
 
   return (
-    <Card className="flex flex-col sm:flex-row w-11/12 md:w-8/12  max-w-[900px] m-8 drop-shadow-xl h-auto p-2 ">
+    <Card className="animate-down-to-up flex flex-col sm:flex-row w-11/12 md:w-8/12  max-w-[900px] m-8 drop-shadow-xl h-auto p-2 ">
       <div className="bg-primary rounded-lg  text-[#23FF53] w-full h-[13.25rem] sm:w-[15.63rem] shrink-0 md:h-[15.25rem] pt-5 pl-5 text-4xl">
         Playlist AI
       </div>
