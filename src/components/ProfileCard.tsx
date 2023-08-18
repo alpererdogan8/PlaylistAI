@@ -1,7 +1,4 @@
 "use client";
-
-import { useEffect, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,18 +11,7 @@ import { signOut, useSession } from "next-auth/react";
 import { Label } from "./ui/label";
 
 export function ProfileCard() {
-  const [position, setPosition] = useState<{ logout: "logout" | "" }>();
   const { data } = useSession();
-
-  useEffect(() => {
-    if (position?.logout === "logout") {
-      signOut();
-    }
-    return () => {
-      setPosition({ logout: "" });
-    };
-  }, [position]);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -36,13 +22,11 @@ export function ProfileCard() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" border-red-500 hover:border-red-500 p-0 min-w-[8.72rem] h-[3.2rem] lg:h-auto md:w-[9.74rem] lg:w-[13rem] border-[3px]  bg-opposite">
-        <DropdownMenuRadioGroup
-          className="h-[3.2rem]  "
-          value={position?.logout}
-          onValueChange={() => setPosition({ logout: "logout" })}>
+        <DropdownMenuRadioGroup className="h-[3.2rem]">
           <DropdownMenuRadioItem
             className=" focus:bg-destructive bg-destructive/80   p-1 w-full h-[100%] pb-2 lg:pb-0.5 text-base md:text-xl   cursor-pointer flex justify-center items-center text-primary-foreground focus:text-white  "
-            value="logout">
+            value="logout"
+            onClick={() => signOut({ callbackUrl: "/" })}>
             Logout
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
