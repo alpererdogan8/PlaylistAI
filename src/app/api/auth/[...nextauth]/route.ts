@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions, TokenSet } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
