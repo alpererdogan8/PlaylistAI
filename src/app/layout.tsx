@@ -5,6 +5,7 @@ import { Albert_Sans } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Session } from "@/components/provider/Session";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ContextProvider } from "@/context/ContextApi";
 
 const AlbertSans = Albert_Sans({ subsets: ["latin"] });
 
@@ -19,11 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${AlbertSans.className} flex flex-col justify-between items-center h-screen selection:bg-[#23FF53] selection:text-secondary-foreground font-semibold `}>
         <Session>
-          <ThemeProvider attribute="class" enableSystem>
-            <Header />
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <ContextProvider>
+            <ThemeProvider attribute="class" enableSystem>
+              <Header />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </ContextProvider>
         </Session>
       </body>
     </html>
