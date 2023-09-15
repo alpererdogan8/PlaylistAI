@@ -14,7 +14,7 @@ function jsonToCsv(jsonData: any): string {
     csvData.push(row.join(","));
   });
 
-  return csvData.join("\n");
+  return csvData.join(",");
 }
 
 export async function GET(req: NextRequest) {
@@ -24,7 +24,9 @@ export async function GET(req: NextRequest) {
     // For now not accesible offset(range) parameter because of api limitation
     // const limit = Number(req.nextUrl.searchParams.get("limit")) || 50;
     // const range = Number(req.nextUrl.searchParams.get("range")) || 100;
-    const limit = 10;
+    const csv: boolean = req.nextUrl.searchParams.get("csv") === "true" ? true : false;
+
+    const limit = 50;
     const range = 200;
     const getPlaylistLimitAndOffset = async (limit: number, offset: number) => {
       const res = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
@@ -43,15 +45,28 @@ export async function GET(req: NextRequest) {
         trackList.push(playlist);
       }
 
-      const json = trackList
+      const newTrackList = trackList
         .map((track: any) => {
-          return track.items.map((item: any, index: number) => {
-            return { id: index, music: item.track.name, artist: item.track.artists[0].name };
+          if (csv) {
+            return track.items.map((item: any) => {
+              return { music: item.track.name, artist: item.track.artists[0].name };
+            });
+          }
+          return track.items.map((item: any) => {
+            return {
+              music: item.track.name,
+              artist: item.track.artists[0].name,
+              image: item.track.album.images,
+              previewUrl: item.track.preview_url,
+              uri: item.track.uri,
+            };
           });
         })
+        //The reduce method regularly lists multiple objects in an array under a single object
+
         .reduce((acc, curr) => acc.concat(curr), []);
 
-      return NextResponse.json(jsonToCsv(json));
+      return NextResponse.json(csv ? jsonToCsv(newTrackList) : newTrackList);
     }
     const result = await getPlaylistLimitAndOffset(limit, 0);
     const json = result.items.map((item: any) => {
