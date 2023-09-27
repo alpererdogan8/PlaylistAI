@@ -17,9 +17,10 @@ function jsonToCsv(jsonData: any): string {
   return csvData.join(",");
 }
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+    const { token } = await req.json();
 
     // For now not accesible offset(range) parameter because of api limitation
     // const limit = Number(req.nextUrl.searchParams.get("limit")) || 50;
@@ -27,12 +28,12 @@ export async function GET(req: NextRequest) {
     const csv: boolean = req.nextUrl.searchParams.get("csv") === "true" ? true : false;
 
     const limit = 50;
-    const range = 200;
+    const range = 50;
     const getPlaylistLimitAndOffset = async (limit: number, offset: number) => {
       const res = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${token || session?.access_token}`,
           "Content-Type": "application/json",
         },
       });
