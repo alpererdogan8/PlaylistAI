@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Session } from "@/components/provider/Session";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ContextProvider } from "@/context/ContextApi";
+import { Toaster } from "@/components/ui/toaster";
 
 const AlbertSans = Albert_Sans({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Header />
               {children}
               <Footer />
+              <Toaster />
             </ThemeProvider>
           </ContextProvider>
         </Session>
