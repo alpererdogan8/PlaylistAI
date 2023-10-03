@@ -18,11 +18,10 @@ const systemPrompt = (text: string) => {
 -Return your request response with only *music name* in the array.
 ---${text}---`;
 };
-
 export async function POST(request: Request) {
   const { token, messages } = await request.json();
 
-  const res = await fetch("http://localhost:3000/api/tracks/me?csv=true", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tracks/me?csv=true`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -46,11 +45,5 @@ export async function POST(request: Request) {
     stream: true,
   });
   const stream = await OpenAIStream(response);
-  return new StreamingTextResponse(stream, {
-    headers: {
-      "X-RateLimit-Remaining": request.headers.get("X-RateLimit-Remaining")!,
-      "X-RateLimit-Limit": request.headers.get("X-RateLimit-Limit")!,
-      "X-RateLimit-Reset": request.headers.get("X-RateLimit-Reset")!,
-    },
-  });
+  return new StreamingTextResponse(stream);
 }
