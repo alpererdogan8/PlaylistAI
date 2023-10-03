@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
     const csv: boolean = req.nextUrl.searchParams.get("csv") === "true" ? true : false;
 
     const limit = 50;
-    const range = 150;
-    const getPlaylistLimitAndOffset = async (limit: number, offset: number) => {
+    const range = 200;
+    const getPlaylistLimitAndOffset = async (limit: number, offset: number = 0) => {
       const res = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
         method: "GET",
         headers: {
