@@ -4,7 +4,7 @@ import { kv } from "@vercel/kv";
 
 const ratelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(2, "2 m"),
+  limiter: Ratelimit.slidingWindow(2, "6 m"),
 });
 
 export const config = {
