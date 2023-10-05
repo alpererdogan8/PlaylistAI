@@ -3,6 +3,7 @@ import { Card } from "@/components/landing/Card";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import Video from "@/components/landing/Video";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -35,12 +36,8 @@ export default async function Home() {
           />
           <Card imgWidth={325} imgHeight={434} header="Your new playlist" image={GenerateListSVG} alt="image" />
         </section>
-        <section className="w-auto">
-          <iframe
-            className="w-full h-[600px] my-20"
-            src="https://www.youtube.com/embed/pg6UhJbFl0A?controls=0"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        <section className="flex justify-center items-center">
+          <Video />
         </section>
       </main>
     </>
