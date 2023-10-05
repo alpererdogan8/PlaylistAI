@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import useContextApi from "@/context/ContextApi";
 
 interface IMusicItem {
