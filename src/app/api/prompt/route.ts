@@ -24,7 +24,7 @@ const systemPrompt = (text: string) => {
 
 const ratelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(2, "4 m"),
+  limiter: Ratelimit.slidingWindow(2, "6 h"),
 });
 
 export async function POST(request: NextRequest) {
