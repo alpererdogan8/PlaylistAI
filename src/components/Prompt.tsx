@@ -6,7 +6,6 @@ import { exampleList } from "@/lib/prompt_examples";
 import { useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import useContextApi from "@/context/ContextApi";
-import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import Button from "./Button";
 import { Skeleton } from "./ui/skeleton";
 export function Prompt() {
@@ -14,19 +13,21 @@ export function Prompt() {
 
   const session = useSession();
   const { dispatch, getPlaylists } = useContextApi();
-  const remaining: Promise<number> = new Promise((resolve, reject) => {
-    const cookie = Number(getCookie("X-RateLimit-Remaining"));
-    resolve(Number(cookie));
-  });
-  const [rateLimit, setRateLimit] = useState<number | string | null>(null);
+  type TRateLimit = { X_RateLimit_Remaining: string; X_RateLimit_Reset?: string };
+  const [rateLimit, setRateLimit] = useState<TRateLimit>();
+  const [humanizeTime, setHumanizeTime] = useState<string>();
 
-  const { handleInputChange, handleSubmit, input, messages, setMessages, isLoading } = useChat({
+  const { handleInputChange, handleSubmit, input, messages, isLoading } = useChat({
     api: "/api/prompt",
     headers: {
       "Content-Type": "application/json",
     },
-    onResponse() {
-      setRateLimit(Number(getCookie("X-RateLimit-Remaining"))!);
+    onResponse(response) {
+      const remaining = response.headers.get("X-RateLimit-Remaining")!;
+      const reset = response.headers.get("X-RateLimit-Reset")!;
+      console.log(response.headers.get("X-RateLimit-Remaining"));
+      console.log(response.headers.get("X-RateLimit-Reset"));
+      setRateLimit({ X_RateLimit_Remaining: remaining, X_RateLimit_Reset: reset });
     },
     body: { token: session.data?.access_token },
     initialMessages: [
@@ -37,12 +38,6 @@ export function Prompt() {
       },
     ],
   });
-  useEffect(() => {
-    remaining.then((rateLimitCookie: number) => {
-      setRateLimit(rateLimitCookie);
-    });
-  }, []);
-
   useEffect(() => {
     const exampleLoop = setInterval(() => {
       const random = Math.floor(Math.random() * exampleList.length);
@@ -87,18 +82,15 @@ export function Prompt() {
   }, [isLoading, messages]);
 
   useEffect(() => {
-    const remaining = Number(getCookie("X-RateLimit-Remaining"));
-    console.log(remaining);
-
-    if (rateLimit === 0) {
-      const createdAt = Number(getCookie("X-RateLimit-Reset"));
+    if (rateLimit?.X_RateLimit_Remaining === "0") {
+      const createdAt = Number(rateLimit.X_RateLimit_Reset);
       const intervalId = setInterval(() => {
         const now = new Date();
         const remainingTime = Math.max(createdAt - now.getTime(), 0);
 
         if (remainingTime === 0) {
           clearInterval(intervalId);
-          setRateLimit(2);
+          setRateLimit({ X_RateLimit_Remaining: "2" });
         } else {
           const remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
           const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60);
@@ -107,7 +99,7 @@ export function Prompt() {
             .toString()
             .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 
-          setRateLimit(formattedTime); // Ratelimit'i zaman formatında güncelle
+          setHumanizeTime(formattedTime);
         }
       }, 1000);
     }
@@ -117,7 +109,7 @@ export function Prompt() {
       onSubmit={handleSubmit}
       className="w-11/12 md:w-8/12  max-w-[900px] m-2 animate-down-to-up h-auto flex items-start justify-end ">
       <div className="w-full flex flex-col">
-        {rateLimit ? (
+        {rateLimit?.X_RateLimit_Reset !== "0" ? (
           <Input
             type="text"
             name="prompt"
@@ -131,11 +123,11 @@ export function Prompt() {
           <Skeleton className="w-full h-[53px] border-2 focus:border-2 focus:drop-shadow-xl focus:border-slate-700 focus:outline-none dark:focus:border-primary dark:focus:border-2 dark:transition-none transition-all text-secondary-foreground font-semibold text-lg -tracking-wider rounded-[0.625rem]" />
         )}
         <Suspense fallback={<Skeleton className="w-44 h-5" />}>
-          {rateLimit !== 0 ? (
+          {rateLimit?.X_RateLimit_Remaining !== "0" ? (
             <>
               {rateLimit ? (
-                <div className={`${rateLimit === 1 ? "text-red-500" : ""} ml-1 mt-2`}>
-                  You have {rateLimit} remaining
+                <div className={`${rateLimit.X_RateLimit_Remaining === "1" ? "text-red-500" : ""} ml-1 mt-2`}>
+                  You have {rateLimit.X_RateLimit_Remaining} remaining
                 </div>
               ) : (
                 <Skeleton className="w-44 h-5  ml-1 mt-2" />
@@ -144,7 +136,7 @@ export function Prompt() {
           ) : (
             <>
               {rateLimit ? (
-                <span className="ml-1 mt-2"> {rateLimit} left to recreate a playlist</span>
+                <span className="ml-1 mt-2"> {humanizeTime} left to recreate a playlist</span>
               ) : (
                 <Skeleton className="w-44 h-5  ml-1 mt-2" />
               )}{" "}
@@ -152,17 +144,13 @@ export function Prompt() {
           )}
         </Suspense>
       </div>
-      {rateLimit ? (
-        <Button
-          type="submit"
-          disabled={typeof rateLimit === "string" ? true : isLoading}
-          isLoading={isLoading}
-          className="absolute mr-[7px] w-[125px] mt-[5.2px] rounded-[0.438rem]  bg-black dark:text-black dark:bg-white dark:hover:bg-[#11d43c] leading-3 dark:hover:text-white">
-          Generate
-        </Button>
-      ) : (
-        <Skeleton className="absolute mr-[7px] w-[125px] mt-[5.2px] rounded-[0.438rem]  bg-black dark:text-black dark:bg-white dark:hover:bg-[#11d43c] leading-3 dark:hover:text-white" />
-      )}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        isLoading={isLoading}
+        className="absolute mr-[7px] w-[125px] mt-[5.2px] rounded-[0.438rem]  bg-black dark:text-black dark:bg-white dark:hover:bg-[#11d43c] leading-3 dark:hover:text-white">
+        Generate
+      </Button>
     </form>
   );
 }
