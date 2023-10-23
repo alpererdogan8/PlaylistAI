@@ -1,5 +1,8 @@
 import { Configuration, OpenAIApi } from "openai-edge";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { Message, OpenAIStream, StreamingTextResponse } from "ai";
+import { kv } from "@vercel/kv";
+import { Ratelimit } from "@upstash/ratelimit";
+import { NextRequest, NextResponse } from "next/server";
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -18,8 +21,32 @@ const systemPrompt = (text: string) => {
 -Return your request response with only *music name* in the array.
 ---${text}---`;
 };
-export async function POST(request: Request) {
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(2, "4 m"),
+});
+
+export async function POST(request: NextRequest) {
   const { token, messages } = await request.json();
+  const ip = request.ip ?? "127.0.0.1";
+  const { limit, reset, remaining } = await ratelimit.limit(ip);
+
+  if (remaining === 0) {
+    const messages: Message = {
+      id: new Date().getTime().toString(),
+      content: "rate limit exceeded",
+      role: "assistant",
+      createdAt: new Date(),
+    };
+    return new Response(JSON.stringify(messages), {
+      headers: {
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString(),
+      },
+    });
+  }
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tracks/me?csv=true`, {
     method: "POST",
@@ -45,5 +72,12 @@ export async function POST(request: Request) {
     stream: true,
   });
   const stream = await OpenAIStream(response);
-  return new StreamingTextResponse(stream);
+
+  return new StreamingTextResponse(stream, {
+    headers: {
+      "X-RateLimit-Limit": limit.toString(),
+      "X-RateLimit-Remaining": remaining.toString(),
+      "X-RateLimit-Reset": reset.toString(),
+    },
+  });
 }
