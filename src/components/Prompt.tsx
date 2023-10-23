@@ -25,8 +25,6 @@ export function Prompt() {
     onResponse(response) {
       const remaining = response.headers.get("X-RateLimit-Remaining")!;
       const reset = response.headers.get("X-RateLimit-Reset")!;
-      console.log(response.headers.get("X-RateLimit-Remaining"));
-      console.log(response.headers.get("X-RateLimit-Reset"));
       setRateLimit({ X_RateLimit_Remaining: remaining, X_RateLimit_Reset: reset });
     },
     body: { token: session.data?.access_token },
